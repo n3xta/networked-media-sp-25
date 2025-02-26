@@ -1,0 +1,13 @@
+body {
+    background-color: rgb(45, 179, 45);
+}
+
+.form-container{
+    margin: auto;
+    max-width: 300px;
+}
+.form-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
