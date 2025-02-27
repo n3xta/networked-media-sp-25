@@ -1,0 +1,8 @@
+body{
+    background-color: lightblue;
+}
+
+.message-container{
+    margin: 10px;
+    border: 2px solid black;
+}
