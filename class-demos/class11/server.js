@@ -16,14 +16,14 @@ app.use(express.static('public'))   // serves all the static files from the publ
 app.use(encodedParser)
 app.set("view engine", "ejs")
 
-let messages = []
+let totalPosts = []
 
 // /////////////////////////////////
 // 3. routes
 // /////////////////////////////////
 app.get('/', (req, res)=>{
     // res.send('hello')
-    const data = { posts: messages}
+    const data = { allposts: totalPosts}
 
     res.render('home.ejs', data)
 })
@@ -36,11 +36,29 @@ app.get('/form', (req, res)=>{
 // redirects back to the home page once the data has been processed 
 app.post('/submit', uploadProcessor.single("img"), (req, res)=>{
     // messages.push({
-    //     user: req.query.username,
-    //     color: req.query.color
+    //     user: req.body.username,
+    //     color: req.body.color
     // })
+
+    // creating variable that is storing the same object
+    let receivedData = {
+        user: req.body.username,
+        color: req.body.color
+    }
+
+    // check if file exists
+    if(req.file){
+        // creating the path at which the file will exist in my uploads folder
+        post.imgSrc = "upload/"+req.file.filename
+    }
     console.log(req.body)
+    totalPosts.push(receivedData)
     res.redirect('/')
+})
+
+app.get('/allpostsinjson', (req, res)=>{
+    let jsonDataFormat = JSON.stringify(totalPosts)
+    res.json(jsonDataFormat)
 })
 // /////////////////////////////////
 // 4. listen 

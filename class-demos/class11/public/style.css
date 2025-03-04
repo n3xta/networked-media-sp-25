@@ -5,4 +5,10 @@ body{
 .message-container{
     margin: 10px;
     border: 2px solid black;
+    max-width: 400px;
+}
+
+.image img{
+    width: 100%;
+    object-fit: cover;
 }
