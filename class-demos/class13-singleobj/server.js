@@ -43,6 +43,9 @@ app.post('/person1', up.fields([{name: "profpic", maxCount: 1}, {name: "media1im
 app.get('/p1m1', (req, res)=>{
     res.render('media.ejs', {img: p1.mediaUrl, text: p1.media1text})
 })
+app.get('/p2m1', (req, res)=>{
+    res.render('media.ejs', {img: p2.mediaUrl, text: p2.media1text})
+})
 
 app.get('/secret2', (req, res)=>{
     res.render('form.ejs', {link: '/person2'})

@@ -1,0 +1,47 @@
+<html>
+    <head>
+        <title>class 13 🤍</title>
+        <link href="style.css" rel="stylesheet">
+    </head>
+    <body>
+        <script>
+            function showNext(e){
+                document.getElementById("first").classList.add('hidden')
+                document.getElementById("first").classList.remove('show')
+                document.getElementById("second").classList.add('show')
+                document.getElementById("second").classList.remove('hidden')
+            }
+        </script>
+        <div class="input-container">
+            <form method="POST" action="/upload" enctype="multipart/form-data">
+                <div id="first" class="show">
+                <input type="text" name="textMessage1" placeholder="leave a kind comment!">
+                <div class="controls-container">
+                    <input type="file" name="theimage">
+                    <input type="button" name="sbtn" value="next" onclick="showNext()">
+                </div>
+                </div>
+                <div id="second" class="hidden">
+                    <input type="text" name="textMessage2" placeholder="leave a kind comment!">
+                <div class="controls-container">
+                    <input type="submit" name="sbtn" value="submit">
+                </div>
+                </div>
+            </form>
+        </div>
+        <div class="messages-container">
+            <%# for(let i = 0; i< allPosts.length; i++%>
+            <%# post = allPosts[i] %>
+            <% allPosts.forEach( (post)=>{ %> 
+                <div class="post-item">
+                    <div class="date"> <%= post.date %> </div>
+                    <p class="text">  <%= post.text %>   </p>
+                    <% if(post.imgUrl) { %>
+                        <img src="<%= post.imgUrl %>">
+                    <% } %>
+                </div>
+            <% } ) %>
+            <% %>
+        </div>
+    </body>
+</html>
