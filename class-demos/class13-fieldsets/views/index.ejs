@@ -5,11 +5,11 @@
     </head>
     <body>
         <script>
-            function showNext(e){
-                document.getElementById("first").classList.add('hidden')
-                document.getElementById("first").classList.remove('show')
-                document.getElementById("second").classList.add('show')
-                document.getElementById("second").classList.remove('hidden')
+            function showNext(currId, nextId){
+                document.getElementById(currId).classList.add('hidden')
+                document.getElementById(currId).classList.remove('show')
+                document.getElementById(nextId).classList.add('show')
+                document.getElementById(nextId).classList.remove('hidden')
             }
         </script>
         <div class="input-container">
@@ -18,7 +18,7 @@
                 <input type="text" name="textMessage1" placeholder="leave a kind comment!">
                 <div class="controls-container">
                     <input type="file" name="theimage">
-                    <input type="button" name="sbtn" value="next" onclick="showNext()">
+                    <input type="button" name="sbtn" value="next" onclick="showNext('first', 'second')">
                 </div>
                 </div>
                 <div id="second" class="hidden">
