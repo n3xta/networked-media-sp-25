@@ -55,43 +55,58 @@ let userdb = new nedb({
   autoload: true
 })
 
+// *********************************************
+// creating custom middleware
+// *********************************************
+function requiresAuthentication(req, res, next){
+  if(req.session.loggedInUser){
+    next()
+  } else{
+    res.redirect('/login?err=userNotLoggedIn')
+  }
+}
 
 // default route
-app.get("/", (request, response) => {
+app.get("/", requiresAuthentication, (request, response) => {
 
-  // variable that stores how many visits the page has had
-  let newVisits = 1
+  // if(request.session.loggedInUser){
+    // variable that stores how many visits the page has had
+    let newVisits = 1
 
-  console.log(request.cookies)
+    console.log(request.cookies)
+
+    if(request.cookies.visits){
+      // convert string from the cookie into a number
+      newVisits = parseInt(request.cookies.visits) + 1
+      // the date is an arbitrary date 100 years in the future, converted to ms
+      response.cookie("visits", newVisits, {expires: new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000)})
+    } else{
+      // if the cookie does not exist yet
+      response.cookie("visits", newVisits, {expires: new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000)})
+    }
+
+    let query = {}; // return everything in the db
+
+    // add sorting to my posts
+    let sortQuery = {
+      timestamp: -1 // -1 means reverse chronological order
+    }
+
+    // adding .sort(sortQuery) in between .find() and .exec()
+    database.find(query).sort(sortQuery).exec((err, data) => {
+      // adding a new property to the data that is sent to my ejs 
+      // this needs to be rendered in my ejs
+      response.render("index.ejs", { posts: data, visitsToSite: newVisits });
+    });
+  // } else {
+  //   response.redirect('/login?err=notLoggedIn')
+  // }
   
-  if(request.cookies.visits){
-    // convert string from the cookie into a number
-    newVisits = parseInt(request.cookies.visits) + 1
-    // the date is an arbitrary date 100 years in the future, converted to ms
-    response.cookie("visits", newVisits, {expires: new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000)})
-  } else{
-    // if the cookie does not exist yet
-    response.cookie("visits", newVisits, {expires: new Date(Date.now() + 100 * 365 * 24 * 60 * 60 * 1000)})
-  }
-
-  let query = {}; // return everything in the db
-
-  // add sorting to my posts
-  let sortQuery = {
-    timestamp: -1 // -1 means reverse chronological order
-  }
-
-  // adding .sort(sortQuery) in between .find() and .exec()
-  database.find(query).sort(sortQuery).exec((err, data) => {
-    // adding a new property to the data that is sent to my ejs 
-    // this needs to be rendered in my ejs
-    response.render("index.ejs", { posts: data, visitsToSite: newVisits });
-  });
 });
 
 // route that is attached to the upload form
 // uses multer middleware to parse and store image data
-app.post("/upload", upload.single("theimage"), (req, res) => {
+app.post("/upload", requiresAuthentication, upload.single("theimage"), (req, res) => {
   let currentDate = new Date(); // create date instance
 
   // setup structure of data that is stored in the database
@@ -113,7 +128,7 @@ app.post("/upload", upload.single("theimage"), (req, res) => {
 });
 
 // dynamic route for every page
-app.get("/post/:id", (req, res) => {
+app.get("/post/:id",  requiresAuthentication, (req, res) => {
   // look for specific item in database that has the url from the params
   let query = {
     _id: req.params.id, // _id is the property we are searching for in the db
@@ -126,7 +141,7 @@ app.get("/post/:id", (req, res) => {
 });
 
 // route that is attached to search form
-app.get("/search", (req, res) => {
+app.get("/search",  requiresAuthentication, (req, res) => {
   // getting the term from the form
   let searchTerm = req.query.searchTerm;
 
@@ -141,7 +156,7 @@ app.get("/search", (req, res) => {
   });
 });
 
-app.post("/like", (req, res) => {
+app.post("/like",  requiresAuthentication, (req, res) => {
   let postId = req.body.postId;
 
   // *********************************************
@@ -182,6 +197,13 @@ app.get('/register', (req, res)=>{
 })
 app.get('/login', (req, res)=>{
   res.render('login.ejs')
+})
+// *********************************************
+// adding logout functionality
+// *********************************************
+app.get('/logout',  requiresAuthentication, (req, res)=>{
+  delete req.session.loggedInUser
+  res.redirect('/login')
 })
 
 app.post('/signup', upload.single("profilePicture"), (req, res)=>{
