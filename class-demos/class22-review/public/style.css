@@ -1,0 +1,21 @@
+html, body {
+  
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+}
+canvas {
+  display: block;
+}
+
+#canvas1{
+  /* margin: auto; */
+  /* display: flex;
+  justify-content: center; */
+  /* width: 100%; */
+}
+
+.container{
+  display: flex;
+  justify-content: space-around;
+}
